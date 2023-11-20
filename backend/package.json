@@ -1,0 +1,11 @@
+{
+  "name": "cinema-backend",
+  "version": "1.0.0",
+  "description": "Серверная часть приложения по покупке билетов в кинотеатрах",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Nikita Shalov",
+  "license": "ISC"
+}
