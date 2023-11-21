@@ -14,7 +14,9 @@ const DB_DIALECT = process.env.DB_DIALECT || "mysql";
 // Подключаемся к базе данных
 const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
     host: DB_HOST,
-    dialect: DB_DIALECT
+    dialect: DB_DIALECT,
+    logging: false
+    // logging: (...msg) => logger.INFO(LOGGER_TAG, msg)
 });
 
 // Проверка корректности подключения
