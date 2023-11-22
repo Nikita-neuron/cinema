@@ -1,8 +1,11 @@
 const Hall = require("../models/hall");
+const Seat = require("../models/seat");
 
 class HallService {
     async getAll() {
-        let result = await Hall.findAll();
+        let result = await Hall.findAll({
+            include: Seat
+        });
         return result;
     }
 
@@ -10,33 +13,23 @@ class HallService {
         let result = await Hall.findOne({
             where: {
                 id: id
-            }
+            },
+            include: Seat
         });
         return result;
     }
 
     async create(name, cinema_id) {
-        let result = Hall.create({
+        let result = await Hall.create({
             name: name,
             cinema_id: cinema_id
         });
-        return result;
-    }
-
-    async addSeat(id, seat_id) {
-        let result = Hail.update({
-            seat_id: seat_id,
-        },
-        {
-            where: {
-                id: id
-            }
-        });
+        result = await this.getById(result["id"]);
         return result;
     }
 
     async update(id, name, cinema_id) {
-        let result = Hall.update({
+        let result = await Hall.update({
             name: name,
             cinema_id: cinema_id
         },
@@ -45,16 +38,19 @@ class HallService {
                 id: id
             } 
         });
-        return result;
+        let obj = await this.getById(id);
+        return obj;
     }
 
     async delete(id) {
-        let result = Hall.destroy({
+        let obj = await this.getById(id);
+        let result = await Hall.destroy({
             where: {
                 id: id
             }
         });
-        return result;
+        if (result == 1) return obj;
+        else return null;
     }
 }
 

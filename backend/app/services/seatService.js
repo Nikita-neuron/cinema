@@ -15,34 +15,54 @@ class SeatService {
         return result;
     }
 
-    async create(row, column) {
-        let result = Seat.create({
-            row: row,
-            column: column
+    async getByRowColumnHall(row, column, hall_id) {
+        let result = await Seat.findOne({
+            where: {
+                row: row,
+                column: column,
+                hall_id: hall_id
+            }
         });
         return result;
     }
 
-    async update(id, row, column) {
-        let result = Seat.update({
+    async create(row, column, type, price, hall_id) {
+        let result = await Seat.create({
             row: row,
-            column: column
+            column: column,
+            type: type,
+            price: price,
+            hall_id: hall_id
+        });
+        return result;
+    }
+
+    async update(id, row, column, type, price, hall_id) {
+        let result = await Seat.update({
+            row: row,
+            column: column,
+            type: type,
+            price: price,
+            hall_id: hall_id
         },
         {
             where: {
                 id: id
             } 
         });
-        return result;
+        let obj = await this.getById(id);
+        return obj;
     }
 
     async delete(id) {
-        let result = Seat.destroy({
+        let obj = await this.getById(id);
+        let result = await Seat.destroy({
             where: {
                 id: id
             }
         });
-        return result;
+        if (result == 1) return obj;
+        else return obj;
     }
 }
 

@@ -7,45 +7,41 @@ const LOGGER_TAG = path.relative(process.cwd(), __filename);
 
 class RoleService {
     async getAll() {
-        let roles = await Role.findAll();
+        let result = await Role.findAll();
 
-        logger.INFO(LOGGER_TAG, "Найдены все роли");
-        return roles;
+        return result;
     }
 
     async getById(id) {
-        let role = await Role.findOne({
+        let result = await Role.findOne({
             where: {
                 id: id
             }
         });
 
-        logger.INFO(LOGGER_TAG, `Найдена роль с id = ${id}`);
-        return role;
+        return result;
     }
 
     async getByName(name) {
-        let role = await Role.findOne({
+        let result = await Role.findOne({
             where: {
                 name: name
             }
         });
 
-        logger.INFO(LOGGER_TAG, `Найдена роль с name = ${name}`);
-        return role;
+        return result;
     }
 
     async create(name) {
-        let role = Role.create({
+        let result = await Role.create({
             name: name
         });
 
-        logger.INFO(LOGGER_TAG, `Создана роль с name = ${name}`);
-        return role;
+        return result;
     }
 
     async update(id, name) {
-        let role = Role.update({
+        let result = await Role.update({
             name: name
         },
         {
@@ -54,19 +50,21 @@ class RoleService {
             } 
         });
 
-        logger.INFO(LOGGER_TAG, `Обновлена роль с id = ${id}`);
-        return role;
+        let obj = await this.getById(id);
+        if (result == 1) return obj;
+        else return obj;
     }
 
     async delete(id) {
-        let role = Role.destroy({
+        let obj = await this.getById(id);
+        let result = await Role.destroy({
             where: {
                 id: id
             }
         });
 
-        logger.INFO(LOGGER_TAG, `Удалена роль с id = ${id}`);
-        return role;
+        if (result == 1) return obj;
+        else return obj;
     }
 }
 

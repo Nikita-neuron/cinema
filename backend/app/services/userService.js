@@ -1,42 +1,44 @@
 const path = require('path');
 
 const User = require("../models/user");
+const Role = require("../models/role");
 const logger = require("../logger/logger");
 
 const LOGGER_TAG = path.relative(process.cwd(), __filename);
 
 class UserService {
     async getAll() {
-        let users = await User.findAll();
+        let result = await User.findAll({
+            include: Role
+        });
 
-        logger.INFO(LOGGER_TAG, "Найдены все пользователи");
-        return users;
+        return result;
     }
 
     async getById(id) {
-        let user = await User.findOne({
+        let result = await User.findOne({
             where: {
                 id: id
-            }
+            },
+            include: Role
         });
 
-        logger.INFO(LOGGER_TAG, `Найден пользователь с id = ${id}`);
-        return user;
+        return result;
     }
 
     async getByEmail(email) {
-        let user = await User.findOne({
+        let result = await User.findOne({
             where: {
                 email: email
-            }
+            },
+            include: Role
         });
 
-        logger.INFO(LOGGER_TAG, `Найден пользователь с email = ${email}`);
-        return user;
+        return result;
     }
 
     async create(firstName, lastName, email, password, role_id) {
-        let user = User.create({
+        let result = await User.create({
             firstName: firstName,
             lastName: lastName,
             email: email,
@@ -44,12 +46,12 @@ class UserService {
             role_id: role_id
         });
 
-        logger.INFO(LOGGER_TAG, `Создан пользователь с email = ${email}`);
-        return user;
+        let obj = await this.getById(result["id"]);
+        return obj;
     }
 
     async update(id, firstName, lastName, email, password, role_id) {
-        let user = User.update({
+        let result = await User.update({
             firstName: firstName,
             lastName: lastName,
             email: email,
@@ -62,19 +64,20 @@ class UserService {
             } 
         });
 
-        logger.INFO(LOGGER_TAG, `Обновлен пользователь с id = ${id}`);
-        return user;
+        let obj = await this.getById(id);
+        return obj;
     }
 
     async delete(id) {
-        let user = User.destroy({
+        let obj = await this.getById(id);
+        let result = await User.destroy({
             where: {
                 id: id
             }
         });
 
-        logger.INFO(LOGGER_TAG, `Удален пользователь с id = ${id}`);
-        return user;
+        if (result == 1) return obj;
+        else return obj;
     }
 }
 

@@ -47,13 +47,13 @@ function initAssociations() {
         allowNull: false
     });
 
-    Seat.belongsToMany(Hall, {
-        through: "hall_seat",
-        foreignKey: "seat_id"
+    Hall.hasMany(Seat, {
+        foreignKey: "hall_id",
+        allowNull: false
     });
-    Hall.belongsToMany(Seat, {
-        through: "hall_seat",
-        foreignKey: "hall_id"
+    Seat.belongsTo(Hall, {
+        foreignKey: "hall_id",
+        allowNull: false
     });
     
     Genre.belongsToMany(Movie, {

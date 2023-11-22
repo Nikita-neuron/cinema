@@ -1,4 +1,5 @@
 const Cinema = require("../models/cinema");
+const Seance = require("../models/seance");
 
 class CinemaService {
     async getAll() {
@@ -15,8 +16,17 @@ class CinemaService {
         return result;
     }
 
+    async getByName(name) {
+        let result = await Cinema.findOne({
+            where: {
+                name: name
+            }
+        });
+        return result;
+    }
+
     async create(name, address) {
-        let result = Cinema.create({
+        let result = await Cinema.create({
             name: name,
             address: address
         });
@@ -24,7 +34,7 @@ class CinemaService {
     }
 
     async update(id, name, address) {
-        let result = Cinema.update({
+        let result = await Cinema.update({
             name: name,
             address: address
         },
@@ -33,16 +43,20 @@ class CinemaService {
                 id: id
             } 
         });
-        return result;
+        let obj = await this.getById(id);
+        if (result == 1) return obj;
+        else return obj;
     }
 
     async delete(id) {
-        let result = Cinema.destroy({
+        let obj = await this.getById(id);
+        let result = await Cinema.destroy({
             where: {
                 id: id
             }
         });
-        return result;
+        if (result == 1) return obj;
+        else return obj;
     }
 }
 

@@ -1,4 +1,8 @@
+const { Op } = require("sequelize");
+
 const Seance = require("../models/seance");
+const Hall = require("../models/hall");
+const Movie = require("../models/movie");
 
 class SeanceService {
     async getAll() {
@@ -15,8 +19,33 @@ class SeanceService {
         return result;
     }
 
+    async getByHallTime(hall_id, time_begin, time_end) {
+        let result = await Seance.findAll({
+            where: {
+                hall_id: hall_id,
+                begin: {
+                    [Op.lte]: time_end
+                },
+                end: {
+                    [Op.gte]: time_begin
+                }
+            }
+        });
+        return result;
+    }
+
+    async getByCinema(cinema_id) {
+        let result = await Seance.findAll({
+            include: Hall,
+            where: {
+                "$Hall.cinema_id$": cinema_id
+            }
+        });
+        return result;
+    }
+
     async create(begin, end, movie_id, hall_id) {
-        let result = Seance.create({
+        let result = await Seance.create({
             begin: begin,
             end: end,
             movie_id: movie_id,
@@ -26,7 +55,7 @@ class SeanceService {
     }
 
     async update(id, begin, end, movie_id, hall_id) {
-        let result = Seance.update({
+        let result = await Seance.update({
             begin: begin,
             end: end,
             movie_id: movie_id,
@@ -37,16 +66,20 @@ class SeanceService {
                 id: id
             } 
         });
-        return result;
+        let obj = await this.getById(id);
+        if (result == 1) return obj;
+        else return obj;
     }
 
     async delete(id) {
-        let result = Seance.destroy({
+        let obj = await this.getById(id);
+        let result = await Seance.destroy({
             where: {
                 id: id
             }
         });
-        return result;
+        if (result == 1) return obj;
+        else return obj;
     }
 }
 

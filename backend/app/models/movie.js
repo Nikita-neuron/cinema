@@ -41,6 +41,14 @@ const Movie = db.define('Movie', {
     year: {
         type: DataTypes.INTEGER,
         allowNull: false
+    },
+    coef: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    status: {
+        type: DataTypes.STRING,
+        allowNull: false
     }
 });
 

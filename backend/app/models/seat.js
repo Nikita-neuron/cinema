@@ -16,6 +16,14 @@ const Seat = db.define('Seat', {
     column: {
         type: DataTypes.INTEGER,
         allowNull: false
+    },
+    type: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    price: {
+        type: DataTypes.INTEGER,
+        allowNull: false
     }
 });
 

@@ -15,15 +15,24 @@ class GenreService {
         return result;
     }
 
+    async getByName(name) {
+        let result = await Genre.findOne({
+            where: {
+                name: name
+            }
+        });
+        return result;
+    }
+
     async create(name) {
-        let result = Genre.create({
+        let result = await Genre.create({
             name: name
         });
         return result;
     }
 
     async update(id, name) {
-        let result = Genre.update({
+        let result = await Genre.update({
             name: name
         },
         {
@@ -31,16 +40,20 @@ class GenreService {
                 id: id
             } 
         });
-        return result;
+        let obj = await this.getById(id);
+        if (result == 1) return obj;
+        else return obj;
     }
 
     async delete(id) {
-        let result = Genre.destroy({
+        let obj = await this.getById(id);
+        let result = await Genre.destroy({
             where: {
                 id: id
             }
         });
-        return result;
+        if (result == 1) return obj;
+        else return obj;
     }
 }
 
