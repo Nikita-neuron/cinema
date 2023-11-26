@@ -7,6 +7,7 @@ const { validationResult } = require('express-validator');
 const RoleService = require("../services/roleService");
 const UserService = require("../services/userService");
 const logger = require("../logger/logger");
+const responseBuilder = require("./responseUtils/responseBuilder");
 
 const LOGGER_TAG = path.relative(process.cwd(), __filename);
 
@@ -26,7 +27,13 @@ class AuthController {
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
-                return res.status(httpStatus.BAD_REQUEST).json({ message: errors });
+                return responseBuilder(
+                    res,
+                    httpStatus.BAD_REQUEST,
+                    "Ошибка регистрации",
+                    errors,
+                    null
+                );
             }
 
             const { firstName, lastName, email, password } = req.body;
@@ -34,8 +41,13 @@ class AuthController {
             const userFinded = await UserService.getByEmail(email);
 
             if (userFinded) {
-                logger.INFO(LOGGER_TAG, `Пользовательс такой почтой ужесуществует; email = ${email}`);
-                return res.status(httpStatus.BAD_REQUEST).json({ message: "Пользователь с такой почтой уже существует" });
+                return responseBuilder(
+                    res, 
+                    httpStatus.BAD_REQUEST, 
+                    "Пользователь с такой почтой уже существует",
+                    "Пользователь с такой почтой уже существует",
+                    null
+                );
             }
 
             const hashPassword = bcrypt.hashSync(password, BCRYPT_SALT_ROUNDS);
@@ -45,17 +57,29 @@ class AuthController {
                 lastName,
                 email,
                 hashPassword,
-                userRole["dataValues"]["id"]
+                userRole.id
             );
-            
-            logger.INFO(LOGGER_TAG, `Пользователь с email = ${email} зарегистрирован`);
-            return res.status(httpStatus.OK).json({
-                message: "Пользователь зарегистрирован",
-                user: user["dataValues"]
-            });
+
+            const token = generateAccessToken(user.email, userRole.name);
+
+            return responseBuilder(
+                res,
+                httpStatus.OK,
+                null,
+                null,
+                {
+                    "email": user.email,
+                    "token": token
+                }
+            );
         } catch (e) {
-            logger.ERROR(LOGGER_TAG, e);
-            return res.status(httpStatus.BAD_REQUEST).json({ message: "Ошибка регистрации" });
+            return responseBuilder(
+                res,
+                httpStatus.BAD_REQUEST,
+                "Ошибка регистрации",
+                e,
+                null
+            );
         }
     }
 
@@ -66,28 +90,48 @@ class AuthController {
             const user = await UserService.getByEmail(email);
 
             if (!user) {
-                logger.INFO(LOGGER_TAG, `Неверный логин или пароль`);
-                return res.status(httpStatus.BAD_REQUEST).json({ message: `Неверный логин или пароль` });
+                return responseBuilder(
+                    res,
+                    httpStatus.BAD_REQUEST,
+                    "Неверный логин или пароль",
+                    "Неверный логин или пароль",
+                    null
+                );
             }
 
-            const validPassword = bcrypt.compareSync(password, user["dataValues"]["password"]);
+            const validPassword = bcrypt.compareSync(password, user.password);
             if (!validPassword) {
-                logger.INFO(LOGGER_TAG, `Неверный логин или пароль`);
-                return res.status(httpStatus.BAD_REQUEST).json({ message: `Неверный логин или пароль` });
+                return responseBuilder(
+                    res,
+                    httpStatus.BAD_REQUEST,
+                    "Неверный логин или пароль",
+                    "Неверный логин или пароль",
+                    null
+                );
             }
             
-            const userRole = await RoleService.getById(user["dataValues"]["role_id"]);
+            const userRole = await RoleService.getById(user.role_id);
 
-            const token = generateAccessToken(user["dataValues"]["email"], userRole["dataValues"]["name"]);
-            
-            logger.INFO(LOGGER_TAG, "Сгенерирован токен");
-            return res.status(httpStatus.OK).json({ 
-                "email": user["dataValues"]["email"],
-                "token": token
-            })
+            const token = generateAccessToken(user.email, userRole.name);
+
+            return responseBuilder(
+                res,
+                httpStatus.OK,
+                null,
+                null,
+                {
+                    "email": user.email,
+                    "token": token
+                }
+            );
         } catch (e) {
-            logger.ERROR(LOGGER_TAG, e);
-            return res.status(httpStatus.BAD_REQUEST).json({ message: "Ошибка входа" });
+            return responseBuilder(
+                res,
+                httpStatus.BAD_REQUEST,
+                "Ошибка входа",
+                e,
+                null
+            );
         }
     }
 }

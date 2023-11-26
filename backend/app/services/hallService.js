@@ -19,6 +19,16 @@ class HallService {
         return result;
     }
 
+    async getByCinema(cinema_id) {
+        let result = await Hall.findAll({
+            where: {
+                cinema_id: cinema_id
+            },
+            include: Seat
+        });
+        return result;
+    }
+
     async create(name, cinema_id) {
         let result = await Hall.create({
             name: name,

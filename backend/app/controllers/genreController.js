@@ -22,7 +22,7 @@ class GenreController {
         const { name } = req.body;
 
         const genre = await GenreService.getByName(name);
-        if (genre) res.status(httpStatus.BAD_REQUEST).json("Жанр с таким именем уже существует");
+        if (genre) return res.status(httpStatus.BAD_REQUEST).json("Жанр с таким именем уже существует");
 
         const result = await GenreService.create(name);
         return res.status(httpStatus.OK).json(result);
@@ -32,7 +32,7 @@ class GenreController {
         const { id, name } = req.body;
 
         const genre = await GenreService.getByName(name);
-        if (genre && genre["id"] != id) res.status(httpStatus.BAD_REQUEST).json("Жанр с таким именем уже существует");
+        if (genre && genre["id"] != id) return res.status(httpStatus.BAD_REQUEST).json("Жанр с таким именем уже существует");
 
         const result = await GenreService.update(id, name);
         return res.status(httpStatus.OK).json(result);

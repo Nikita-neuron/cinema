@@ -6,6 +6,7 @@ const routes = require("./app/routes/routes");
 
 const express = require('express');
 const path = require('path');
+const cors = require("cors");
 
 const app = express();
 
@@ -14,6 +15,7 @@ const LOGGER_TAG = path.relative(process.cwd(), __filename);
 
 initDB();
 
+app.use(cors());
 app.use(express.json());
 
 app.use("/api", routes);

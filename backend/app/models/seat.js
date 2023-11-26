@@ -17,6 +17,10 @@ const Seat = db.define('Seat', {
         type: DataTypes.INTEGER,
         allowNull: false
     },
+    taken: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+    },
     type: {
         type: DataTypes.STRING,
         allowNull: false

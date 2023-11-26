@@ -3,6 +3,8 @@ const { Op } = require("sequelize");
 const Seance = require("../models/seance");
 const Hall = require("../models/hall");
 const Movie = require("../models/movie");
+const Cinema = require("../models/cinema");
+const Seat = require("../models/seat");
 
 class SeanceService {
     async getAll() {
@@ -12,6 +14,22 @@ class SeanceService {
 
     async getById(id) {
         let result = await Seance.findOne({
+            include: [
+                {
+                    model: Hall,
+                    include: [
+                        {
+                            model: Cinema
+                        },
+                        {
+                            model: Seat
+                        }
+                    ]
+                },
+                {
+                    model: Movie
+                }
+            ],
             where: {
                 id: id
             }
@@ -34,11 +52,51 @@ class SeanceService {
         return result;
     }
 
+    async getByHalls(halls_id) {
+        let result = await Seance.findAll({
+            include: Movie,
+            where: {
+                hall_id: {
+                    [Op.in]: halls_id
+                }
+            }
+        });
+        return result;
+    }
+
     async getByCinema(cinema_id) {
         let result = await Seance.findAll({
-            include: Hall,
+            include: [
+                {
+                    model: Hall,
+                    include: Seat,
+                    where: {
+                        cinema_id: cinema_id
+                    }
+                },
+                {
+                    model: Movie
+                }
+            ]
+        });
+        return result;
+    }
+
+    async getByMovie(movie_id) {
+        let result = await Seance.findAll({
+            include: {
+                model: Hall,
+                include: [
+                    {
+                        model: Cinema
+                    },
+                    {
+                        model: Seat
+                    }
+                ]
+            },
             where: {
-                "$Hall.cinema_id$": cinema_id
+                movie_id: movie_id
             }
         });
         return result;

@@ -21,6 +21,18 @@ class SeanceController {
         return res.status(httpStatus.OK).json(result);
     }
 
+    async getByCinema(req, res) {
+        const id = req.params.id;
+        const result = await SeanceService.getByCinema(id);
+        return res.status(httpStatus.OK).json(result);
+    }
+
+    async getByMovie(req, res) {
+        const id = req.params.id;
+        const result = await SeanceService.getByMovie(id);
+        return res.status(httpStatus.OK).json(result);
+    }
+
     async create(req, res) {
         const { begin, movie_id, hall_id } = req.body;
 

@@ -12,4 +12,7 @@ router.post("/", roleMiddlleware(["ADMIN", "SUPERADMIN"]), SeanceController.crea
 router.put("/", roleMiddlleware(["ADMIN", "SUPERADMIN"]), SeanceController.update);
 router.delete("/:id", roleMiddlleware(["ADMIN", "SUPERADMIN"]), SeanceController.delete);
 
+router.get("/cinema/:id", SeanceController.getByCinema);
+router.get("/movie/:id", SeanceController.getByMovie);
+
 module.exports = router;
