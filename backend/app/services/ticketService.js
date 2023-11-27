@@ -1,4 +1,9 @@
 const Ticket = require("../models/ticket");
+const Seance = require("../models/seance");
+const Seat = require("../models/seat");
+const Movie = require("../models/movie");
+const Hall = require("../models/hall");
+const Cinema = require("../models/cinema");
 
 class TicketService {
     async getAll() {
@@ -8,6 +13,23 @@ class TicketService {
 
     async getById(id) {
         let result = await Ticket.findOne({
+            include: [
+                {
+                    model: Seance,
+                    include: [
+                        {
+                            model: Movie
+                        },
+                        {
+                            model: Hall,
+                            include: Cinema
+                        }
+                    ]
+                },
+                {
+                    model: Seat
+                }
+            ],
             where: {
                 id: id
             }
@@ -29,6 +51,32 @@ class TicketService {
             where: {
                 id: id,
                 seat_id: seat_id
+            }
+        });
+        return result;
+    }
+
+    async getByUser(user_id) {
+        let result = await Ticket.findAll({
+            include: [
+                {
+                    model: Seance,
+                    include: [
+                        {
+                            model: Movie
+                        },
+                        {
+                            model: Hall,
+                            include: Cinema
+                        }
+                    ]
+                },
+                {
+                    model: Seat
+                }
+            ],
+            where: {
+                user_id: user_id
             }
         });
         return result;

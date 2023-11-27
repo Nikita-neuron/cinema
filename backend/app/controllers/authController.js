@@ -1,26 +1,17 @@
 const path = require('path');
 const httpStatus = require('http-status');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 
 const RoleService = require("../services/roleService");
 const UserService = require("../services/userService");
 const logger = require("../logger/logger");
 const responseBuilder = require("./responseUtils/responseBuilder");
+const generateAccessToken = require("../utils/generateToken");
 
 const LOGGER_TAG = path.relative(process.cwd(), __filename);
 
 const BCRYPT_SALT_ROUNDS = parseInt(process.env.BCRYPT_SALT_ROUNDS) || 7;
-const JWT_SECRET = process.env.JWT_SECRET || "SECRET_STRING";
-
-const generateAccessToken = (email, role) => {
-    const payload = {
-        email,
-        role
-    };
-    return jwt.sign(payload, JWT_SECRET, { expiresIn: "24h" });
-}
 
 class AuthController {
     async registration(req, res) {
@@ -69,6 +60,7 @@ class AuthController {
                 null,
                 {
                     "email": user.email,
+                    "firstName": user.firstName,
                     "token": token
                 }
             );
@@ -121,6 +113,7 @@ class AuthController {
                 null,
                 {
                     "email": user.email,
+                    "firstName": user.firstName,
                     "token": token
                 }
             );

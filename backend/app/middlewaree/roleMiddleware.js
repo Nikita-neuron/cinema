@@ -18,17 +18,17 @@ module.exports = (roles) => {
             const token = req.headers.authorization.split(`${JWT_PREFIX} `)[1];
     
             if (!token) {
-                return res.status(httpStatus.FORBIDDEN).json({ message: "Пользователь не авторизован" });
+                return res.status(httpStatus.FORBIDDEN).json("Пользователь не авторизован");
             }
     
             const {role: userRole} = jwt.verify(token, JWT_SECRET);
             if (!roles.includes(userRole)) {
-                return res.status(httpStatus.FORBIDDEN).json({ message: "У вас нет доступа" });
+                return res.status(httpStatus.FORBIDDEN).json("У вас нет доступа");
             }
             next();
         } catch(e) {
             logger.ERROR(LOGGER_TAG, e);
-            return res.status(httpStatus.FORBIDDEN).json({ message: "Пользователь не авторизован" });
+            return res.status(httpStatus.FORBIDDEN).json("Пользователь не авторизован");
         }
     }
 }

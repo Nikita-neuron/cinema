@@ -17,7 +17,7 @@ module.exports = (req, res, next) => {
         const token = req.headers.authorization.split(`${JWT_PREFIX} `)[1];
 
         if (!token) {
-            return res.status(httpStatus.FORBIDDEN).json({ message: "Пользователь не авторизован" });
+            return res.status(httpStatus.FORBIDDEN).json( "Пользователь не авторизован" );
         }
 
         const decodedData = jwt.verify(token, JWT_SECRET);
@@ -25,6 +25,6 @@ module.exports = (req, res, next) => {
         next();
     } catch(e) {
         logger.ERROR(LOGGER_TAG, e);
-        return res.status(httpStatus.FORBIDDEN).json({ message: "Пользователь не авторизован" });
+        return res.status(httpStatus.FORBIDDEN).json( "Пользователь не авторизован" );
     }
 }

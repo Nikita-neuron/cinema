@@ -22,10 +22,18 @@ class TicketController {
         return res.status(httpStatus.OK).json(result);
     }
 
-    async create(req, res) {
-        const { user_id, seance_id, seat_id } = req.body;
+    async getByUser(req, res) {
+        const user = await UserService.getByEmail(req.user.email);
+        if (!user) return res.status(httpStatus.BAD_REQUEST).json("Пользователь не найден");
 
-        const user = await UserService.getById(user_id);
+        const result = await TicketService.getByUser(user.id);
+        return res.status(httpStatus.OK).json(result);
+    }
+
+    async create(req, res) {
+        const { seance_id, seat_id } = req.body;
+
+        const user = await UserService.getByEmail(req.user.email);
         if (!user) return res.status(httpStatus.BAD_REQUEST).json("Пользователь не найден");
 
         const seance = await SeanceService.getById(seance_id);
@@ -34,7 +42,7 @@ class TicketController {
         const seat = await SeatService.getById(seat_id);
         if (!seat) return res.status(httpStatus.BAD_REQUEST).json("Место не найдено");
 
-        const ticket = await TicketService.getByUserSeanceSeat(user_id, seance_id, seat_id);
+        const ticket = await TicketService.getByUserSeanceSeat(user.id, seance_id, seat_id);
         if (ticket) return res.status(httpStatus.BAD_REQUEST).json("Билет уже куплен");
 
         const seatBusy = await TicketService.getBySeat(seat_id);
@@ -46,7 +54,8 @@ class TicketController {
             return res.status(httpStatus.BAD_REQUEST).json("На данный сеанс уже нельзя купить билеты");
         }
 
-        const result = await TicketService.create(now, user_id, seance_id, seat_id);
+        await SeatService.setTaken(seat_id, true);
+        const result = await TicketService.create(now, user.id, seance_id, seat_id);
         return res.status(httpStatus.OK).json(result);
     }
 
@@ -77,6 +86,13 @@ class TicketController {
 
     async delete(req, res) {
         const id = req.params.id;
+
+        const ticket = await TicketService.getById(id);
+        const user = await UserService.getByEmail(req.user.email);
+        if (ticket.user_id != user.id) return res.status(httpStatus.BAD_REQUEST).json("Это не ваш билет");
+
+        await SeatService.setTaken(ticket.seat_id, false);
+        
         const result = await TicketService.delete(id);
         return res.status(httpStatus.OK).json(result);
     }

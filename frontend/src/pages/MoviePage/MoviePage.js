@@ -33,7 +33,7 @@ const useStyles = makeStyles({
     tableCell: {
         "border-bottom": "none"
     }
-  });
+});
 
 function MoviePage() {
     const { id } = useParams();
@@ -88,13 +88,6 @@ function MoviePage() {
                                 <Typography variant="h4" align="center">
                                     { movie.title }
                                 </Typography>
-                                {/* <Button
-                                    variant="contained"
-                                    sx={{ marginTop: 3 }}
-                                    href="#schedule"
-                                >
-                                    Купить билеты
-                                </Button> */}
                             </Box>
                         </Box>
                     </Paper>

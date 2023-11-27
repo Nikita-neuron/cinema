@@ -15,6 +15,15 @@ class SeatService {
         return result;
     }
 
+    async getByHallId(hall_id) {
+        let result = await Seat.findAll({
+            where: {
+                hall_id: hall_id
+            }
+        });
+        return result;
+    }
+
     async getByRowColumnHall(row, column, hall_id) {
         let result = await Seat.findOne({
             where: {
@@ -37,6 +46,11 @@ class SeatService {
         return result;
     }
 
+    async createMany(seats) {
+        let result = await Seat.bulkCreate(seats);
+        return result;
+    }
+
     async update(id, row, column, type, price, hall_id) {
         let result = await Seat.update({
             row: row,
@@ -54,6 +68,18 @@ class SeatService {
         return obj;
     }
 
+    async setTaken(id, taken) {
+        let result = await Seat.update({
+            taken: taken
+        },
+        {
+            where: {
+                id: id
+            }
+        });
+        return result;
+    }
+
     async delete(id) {
         let obj = await this.getById(id);
         let result = await Seat.destroy({
@@ -63,6 +89,15 @@ class SeatService {
         });
         if (result == 1) return obj;
         else return obj;
+    }
+
+    async deleteByHall(hall_id) {
+        let result = await Seat.destroy({
+            where: {
+                hall_id: hall_id
+            }
+        });
+        return result;
     }
 }
 

@@ -1,54 +1,88 @@
-import React from "react";
+import React, { useState} from "react";
 
 import { 
-    Grid,
     Box,
     Button,
     Tooltip,
     Typography
 } from "@mui/material";
-import { styled } from '@mui/material/styles';
 
-function HallCreateSeat({ seat }) {
-    // console.log(seat)
+function HallCreateSeat({ seat, onClick }) {
+    const [isHover, setIsHover] = useState(false);
 
-    let color = '#0063cc'
-
-    if (seat.type == "VIP") {
-        color = "#FF9900"
-    }
-    else if (seat.type == "disabled") {
-        color = "#86878D"
+    const chooseColor = (type) => {
+        switch(type) {
+            case "Обычное": return '#0063cc';
+            case "VIP": return "#FF9900";
+            case "disabled": return "#86878D";
+        }
     }
 
-    const SeatButton = styled(Button)(({ theme }) => ({
-        height: 20,
-        width: 20,
-        minWidth: 0,
-        margin: 4,
-        padding: 0,
-        borderRadius: "50%",
-        backgroundColor: color,
-        '&:hover': {
-            backgroundColor: color,
-            transform: "scale(1.5)"
-        },
-    }));
+    let flg = false;
+    let width = 20;
+    let height = 20;
+    let btnWidth = "100%";
+    let btnHeight = "100%";
+    let hover = {
+        backgroundColor: chooseColor(seat.type),
+        transform: "scale(1.5)"
+    }
+
+    if (seat.type == "disabled") {
+        flg = true;
+        hover = { backgroundColor: chooseColor(seat.type) }
+
+        btnWidth = 10;
+        btnHeight = 10;
+    }
+
+    if (seat.row == 0) {
+        flg = true;
+        hover = { backgroundColor: chooseColor(seat.type) };
+    }
 
     return (
-        <Tooltip
-            disableHoverListener={ seat.row == 0 }
-            arrow
+        <Tooltip                              
             disableInteractive
-            title={
+            open={!flg && isHover}
+            arrow
+            placement="top"
+            title={ 
                 <Box>
                     <Typography align="center">{ seat.price } ₽</Typography>
                     <Typography align="center">{ `${seat.row} ряд, ${seat.column} место` }</Typography>
                 </Box>
             }
-            placement="top"
+                                            
         >
-            <SeatButton variant="contained" />
+            <Box
+                sx={{
+                    height: width,
+                    width: height,
+                    margin: "3px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    background: "transparent"
+                }}
+                onClick={ onClick }
+                onMouseOver={() => setIsHover(true)}
+                onMouseLeave={() => setIsHover(false)}
+            >
+                <Button 
+                    sx={{
+                        height: btnHeight,
+                        width: btnWidth,
+                        minWidth: 0,
+                        margin: 0,
+                        padding: 0,
+                        borderRadius: "50%",
+                        backgroundColor: chooseColor(seat.type),
+                        '&:hover': hover
+                    }}
+                    variant="contained"
+                />
+            </Box>
         </Tooltip>
     );
 }

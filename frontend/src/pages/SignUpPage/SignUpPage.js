@@ -2,6 +2,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
 import * as yup from "yup";
+import { Navigate } from 'react-router-dom';
 
 import Grid from '@mui/material/Grid';
 
@@ -132,6 +133,10 @@ function SignUpPage() {
                             <Alert severity="success">
                                 Регистрация прошла успешно!
                             </Alert>
+                        }
+                        {
+                            isAuthenticated &&
+                            <Navigate to={ `/` } replace={true}/>
                         }
                         </Grid>
                     </Grid>

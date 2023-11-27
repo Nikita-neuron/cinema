@@ -1,7 +1,11 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import Grid from '@mui/material/Grid';
+import { 
+    Grid,
+    Paper,
+    Typography
+} from '@mui/material';
 
 import CinemaCard from "../CinemaCard/CinemaCard";
 
@@ -18,17 +22,22 @@ function CinemasGrid() {
     }, []);
 
     return (
-        <Grid container justifyContent="center" spacing={ 2 }>
-            {
-                cinemas.map(cinema => {
-                    return (
-                        <Grid key={ cinema["id"] } item>
-                            <CinemaCard data={ cinema } />
-                        </Grid>
-                    )
-                })
-            }
-        </Grid>
+        <Paper sx={{ marginTop: 1, marginBottom: 3, padding: 5 }}>
+            <Typography variant="h5" align="center" sx={{ marginBottom: 1 }}>
+                Кинотеатры
+            </Typography>
+            <Grid container justifyContent="center" spacing={ 2 }>
+                {
+                    cinemas.map(cinema => {
+                        return (
+                            <Grid key={ cinema["id"] } item>
+                                <CinemaCard data={ cinema } />
+                            </Grid>
+                        )
+                    })
+                }
+            </Grid>
+        </Paper>
     );
 }
 

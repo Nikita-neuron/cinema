@@ -1,4 +1,10 @@
-import { SIGN_IN, SIGN_IN_ERROR, SIGN_UP, SIGN_UP_ERROR } from "../types";
+import { 
+    SIGN_IN,
+    SIGN_IN_ERROR,
+    SIGN_UP,
+    SIGN_UP_ERROR,
+    LOGOUT_USER_ME
+} from "../types";
 
 const initialState = {
     isAuthenticated: false,
@@ -20,8 +26,14 @@ export const auth = (state = initialState, action) => {
             return {
                 ...state,
                 isAuthenticated: false,
-                error: action.payload
+                error: action.payload.error
             }
-        default: return initialState;
+        case LOGOUT_USER_ME:
+            return {
+                ...state,
+                isAuthenticated: false,
+                error: null
+            }
+        default: return state;
     }
 }

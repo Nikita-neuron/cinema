@@ -6,6 +6,9 @@ const roleMiddlleware = require("../middlewaree/roleMiddleware");
 
 const router = Router();
 
+router.get("/me", authMiddleware, UserController.getMe);
+router.put("/me", authMiddleware, UserController.updateMe);
+
 router.get("/", UserController.getAll);
 router.get("/:id", UserController.getById);
 router.post("/", roleMiddlleware(["ADMIN", "SUPERADMIN"]), UserController.create);

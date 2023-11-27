@@ -1,143 +1,92 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 import { 
     Grid,
     Box,
     Button,
-    Tooltip,
     Typography,
     Paper,
     TextField
 } from "@mui/material";
-import { styled } from '@mui/material/styles';
 
 import HallCreateSeat from "../HallCreateSeat/HallCreateSeat";
 
+import { getSeatsByHall, updateSeatByHall, updateSeatsSize, updateSeatsPrice, saveSeatsByHall } from "../../store/actions/seats";
+
 function HallCreate({ hall }) {
-    const seats = hall.Seats;
-    // console.log(seats);
+    const dispatch = useDispatch();
 
-    const [rowNumber, setRowNumber] = useState(1);
-    const [columnNumber, setColumnNumber] = useState(1);
+    const { seats, rowNumber, columnNumber, regularPrice, vipPrice } = useSelector(state => {
+        return state.seats
+    });
 
-    const [regularPrice, setRegularPrice] = useState(1);
-    const [vipPrice, setVipPrice] = useState(1);
-
-    let regularSeat = {
-        "row": 0,
-        "column": 0,
-        "type": "Обычное",
-        "price": regularPrice,
-        "hall_id": hall.id
+    let exSeat = {
+        row: 0,
+        column: 0,
+        type: "Обычное",
+        price: regularPrice,
+        hall_id: hall.id
     }
-
-    let vipSeat = {
-        "row": 0,
-        "column": 0,
-        "type": "VIP",
-        "price": vipPrice,
-        "hall_id": hall.id
-    }
-
-    let disableSeat = {
-        "row": 0,
-        "column": 0,
-        "type": "disabled",
-        "price": 1,
-        "hall_id": hall.id
-    }
-
-    let firstSeat = {
-        "row": 1,
-        "column": 1,
-        "type": "Обычное",
-        "price": regularPrice,
-        "hall_id": hall.id
-    }
-
-    const [seatsMatrix, setSeatsMatrix] = useState([[firstSeat]]);
 
     useEffect(() => {
-        let matrix = seatsMatrix
-
-        matrix = matrix.slice(0, rowNumber);
-        for (let i = 0; i < matrix.length; i++) {
-            matrix[i] = matrix[i].slice(0, columnNumber);
-        }
-
-        for (let i = matrix.length; i < rowNumber; i++) {
-            matrix[i] = [];
-            for (let j = 0; j < columnNumber; j++) {
-                matrix[i][j] = {
-                    "row": i + 1,
-                    "column": j + 1,
-                    "type": "Обычное",
-                    "price": regularPrice,
-                    "hall_id": hall.id
-                }
-            }
-        }
-        for (let j = matrix[0].length; j < columnNumber; j++) {
-            for (let i = 0; i < rowNumber; i++) {
-                matrix[i][j] = {
-                    "row": i + 1,
-                    "column": j + 1,
-                    "type": "Обычное",
-                    "price": regularPrice,
-                    "hall_id": hall.id
-                }
-            }
-        }
-        setSeatsMatrix(matrix);
-    }, [rowNumber, columnNumber]);
-
-    useEffect(() => {
-        let matrix = seatsMatrix;
-        for (let i = 0; i < matrix.length; i++) {
-            for (let j = 0; j < matrix[i].length; j++) {
-                if (matrix[i][j].type == "Обычное") {
-                    matrix[i][j].price = regularPrice;
-                }
-                else if (matrix[i][j].type == "VIP") {
-                    matrix[i][j].price = vipPrice;
-                }
-            }
-        }
-        console.log(regularPrice, vipPrice);
-        setSeatsMatrix(matrix);
-    }, [regularPrice, vipPrice]);
+        dispatch(getSeatsByHall(hall.id));
+    }, []);
 
     const handleRowNumber = (e) => {
-        let value = e.target.value;
+        let value = Number(e.target.value);
         if (value <= 0) return;
 
-        setRowNumber(value);
+        dispatch(updateSeatsSize(value, columnNumber));
     }
 
     const handleColumnNumber = (e) => {
-        let value = e.target.value;
+        let value = Number(e.target.value);
         if (value <= 0) return;
 
-        setColumnNumber(value);
+        dispatch(updateSeatsSize(rowNumber, value));
     }
 
     const handleRegularPrice = (e) => {
-        let value = e.target.value;
+        let value = Number(e.target.value);
         if (value <= 0) return;
 
-        setRegularPrice(value);
+        dispatch(updateSeatsPrice(value, vipPrice));
     }
 
     const handleVipPrice = (e) => {
-        let value = e.target.value;
+        let value = Number(e.target.value);
         if (value <= 0) return;
 
-        setVipPrice(value);
+        dispatch(updateSeatsPrice(regularPrice, value));
+    }
+
+    const handleOnSeatClick = (seat) => {
+        return (e) => {
+            let newSeat = {...seat};
+            if (newSeat.type == "Обычное") {
+                newSeat.type = "VIP";
+                newSeat.price = vipPrice;
+            }
+            else if (newSeat.type == "VIP") {
+                newSeat.type = "disabled";
+                newSeat.price = 1;
+            }
+            else if (newSeat.type == "disabled") {
+                newSeat.type = "Обычное";
+                newSeat.price = regularPrice;
+            }
+            dispatch(updateSeatByHall(newSeat));
+        }
+    }
+
+    const handleSave = (e) => {
+        dispatch(saveSeatsByHall(seats.flat(), hall.id));
     }
 
     return (
-        <Paper sx={{ display: "flex", justifyContent: "center", flexDirection: "column", padding: 5 }}>
-            <Box sx={{ display: "flex", flexDirection: "row", alignItems: "flex-end" }}>
+        <Paper sx={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", padding: 5 }}>
+            <Box sx={{ display: "flex", flexDirection: "row", alignItems: "flex-end", justifyContent: "center" }}>
                 <TextField 
                     id="standard-basic" 
                     label="Рядов, шт" 
@@ -156,8 +105,8 @@ function HallCreate({ hall }) {
                     onChange={ handleColumnNumber }
                     sx={{ width: 80 }} />
             </Box>
-            <Box sx={{ marginTop: 3 }}>
-                <Box sx={{ display: "flex", flexDirection: "row", alignItems: "flex-end" }}>
+            <Box sx={{ marginTop: 3, display: "flex", justifyContent: "center" }}>
+                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
                     <TextField 
                         id="standard-basic" 
                         label="Цена, рублей" 
@@ -166,12 +115,7 @@ function HallCreate({ hall }) {
                         onChange={ handleRegularPrice }
                         value={ regularPrice }
                         sx={{ width: 110, marginRight: 3 }} />
-                    <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                        <HallCreateSeat seat={ regularSeat } />
-                        <Typography marginLeft={1}> - Обычное место</Typography>
-                    </Box>
-                </Box>
-                <Box sx={{ display: "flex", flexDirection: "row", alignItems: "flex-end", marginTop: 3 }}>
+                    
                     <TextField 
                         id="standard-basic" 
                         label="Цена, рублей" 
@@ -180,40 +124,80 @@ function HallCreate({ hall }) {
                         onChange={ handleVipPrice }
                         value={ vipPrice }
                         sx={{ width: 110, marginRight: 3 }} />
+                </Box>
+                <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", marginTop: 3 }}>
                     <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                        <HallCreateSeat seat={ vipSeat } />
+                        <HallCreateSeat seat={ exSeat } />
+                        <Typography marginLeft={1}> - Обычное место</Typography>
+                    </Box>
+                    <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center", marginY: 2 }}>
+                        <HallCreateSeat seat={{ ...exSeat, price: vipPrice, type: "VIP" }} />
                         <Typography marginLeft={1}> - VIP место</Typography>
                     </Box>
-                </Box>
-                <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center", paddingLeft: 17, marginTop: 3 }}>
-                    <HallCreateSeat seat={ disableSeat } />
-                    <Typography marginLeft={1}> - Заблокировано</Typography>
+                    <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                        <HallCreateSeat seat={{ ...exSeat, price: vipPrice, type: "disabled" }} />
+                        <Typography marginLeft={1}> - Заблокировано</Typography>
+                    </Box>
                 </Box>
             </Box>
-            <Box sx={{ marginTop: 5 }} >
-                <Typography 
-                    align="center"
-                    marginBottom={2} 
-                    sx={{  }}
-                >
-                    Экран
-                </Typography>
-                {
-                    seatsMatrix.map((seatsRow, index) => 
-                        <Box key={ index } sx={{ display: "flex", justifyContent: "center" }}>
-                            <Typography sx={{ marginRight: 2 }}>{ index+1 }</Typography>
-                            <Grid key={ index } container direction="row" sx={{ width: "auto" }}>
-                                {
-                                    seatsRow.map((seat, index) => 
-                                        <HallCreateSeat key={ index } seat={ seat } />
-                                    )
-                                }
-                            </Grid>
-                            <Typography sx={{ marginLeft: 2 }}>{ index+1 }</Typography>
-                        </Box>
-                    )
-                }
+            <Box sx={{ alignContent: "center", marginTop: 3 }}>
+                <Typography align="center">Для измменения состояния нажмите на место.</Typography>
+                <Typography align="center"><b>Первое нажатие:</b> Обычное место.</Typography>
+                <Typography align="center"><b>Второе нажатие:</b> VIP место.</Typography>
+                <Typography align="center"><b>Третье нажатие:</b> место заблокировано</Typography>
             </Box>
+            <Box 
+                sx={{ 
+                    marginTop: 5,
+                    display: "flex",
+                    justifyContent: "center"
+                }} 
+            >
+                <Box>
+                    <Typography 
+                        align="center"
+                        marginBottom={2} 
+                        sx={{ 
+                            width: "auto",
+                            paddingX: 2,
+                            backgroundColor: "#7E7692",
+                            color: "#E6DBFF"
+                        }}
+                    >
+                        Экран
+                    </Typography>
+                    {
+                        seats.map((seatsRow, index) => 
+                            <Box key={ index } sx={{ display: "flex", justifyContent: "center" }}>
+                                <Typography sx={{ marginRight: 2 }}>{ index+1 }</Typography>
+                                <Grid key={ index } container direction="row" sx={{ width: "auto" }}>
+                                    {
+                                        seatsRow.map((seat, index) => 
+                                            <HallCreateSeat key={ index } seat={ seat } onClick={ handleOnSeatClick(seat) } />
+                                        )
+                                    }
+                                </Grid>
+                                <Typography sx={{ marginLeft: 2 }}>{ index+1 }</Typography>
+                            </Box>
+                        )
+                    }
+                </Box>
+            </Box>
+            <Button 
+                variant="contained"
+                sx={{
+                    width: "min-content",
+                    background: "#FFD22D",
+                    color: "#1E1C14",
+                    marginTop: 3,
+                    '&:hover': {
+                        background: "#FBE491"
+                    }
+                }}
+                onClick={ handleSave }
+            >
+                Сохранить
+            </Button>
         </Paper>
     );
 }

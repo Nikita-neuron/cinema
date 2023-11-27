@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 
 function SeancesMovieCard({ data }) {
-    const prices = data.Hall.Seats.map((seat) => seat.price);
+    const prices = data.Hall.Seats.filter(seat => seat.type != "disabled").map((seat) => seat.price);
     const minPrice  = Math.min(...prices);
     return (
         <Card sx={{ minWidth: 275 }}>

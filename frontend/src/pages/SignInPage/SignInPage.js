@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Navigate } from 'react-router-dom';
 
 import {
     Container,
@@ -13,7 +14,7 @@ import {
 
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
-import { login } from "../../store/actions";
+import { login, getCinemas } from "../../store/actions";
 
 function SignInPage() {
     const dispatch = useDispatch();
@@ -70,7 +71,7 @@ function SignInPage() {
                     {
                         error && 
                         <Alert severity="error">
-                            { error.error }
+                            { error }
                         </Alert>
                     }
                     {
@@ -78,6 +79,10 @@ function SignInPage() {
                         <Alert severity="success">
                             Вход выполнен!
                         </Alert>
+                    }
+                    {
+                        isAuthenticated &&
+                        <Navigate to={ `/` } replace={true}/>
                     }
                     <Button
                         type="submit"

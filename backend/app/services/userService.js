@@ -50,6 +50,22 @@ class UserService {
         return obj;
     }
 
+    async updateMe(id, firstName, lastName, email) {
+        let result = await User.update({
+            firstName: firstName,
+            lastName: lastName,
+            email: email
+        },
+        {
+            where: {
+                id: id
+            } 
+        });
+
+        let obj = await this.getById(id);
+        return obj;
+    }
+
     async update(id, firstName, lastName, email, password, role_id) {
         let result = await User.update({
             firstName: firstName,

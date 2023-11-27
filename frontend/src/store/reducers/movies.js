@@ -1,4 +1,4 @@
-import { GET_MOVIE } from "../types";
+import { GET_MOVIE, GET_MOVIES } from "../types";
 
 const initialState = {
     movies: [],
@@ -11,6 +11,12 @@ export const movies = (state = initialState, action) => {
             return {
                 ...state,
                 selectedMovie: action.payload
+            }
+        
+        case GET_MOVIES:
+            return {
+                ...state,
+                movies: action.payload
             }
         
         default: return state;

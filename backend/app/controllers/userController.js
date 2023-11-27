@@ -5,6 +5,8 @@ const bcrypt = require('bcrypt');
 const logger = require("../logger/logger");
 const UserService = require("../services/userService");
 const RoleService = require("../services/roleService");
+const TicketService = require("../services/ticketService");
+const generateAccessToken = require("../utils/generateToken");
 
 const LOGGER_TAG = path.relative(process.cwd(), __filename);
 const BCRYPT_SALT_ROUNDS = parseInt(process.env.BCRYPT_SALT_ROUNDS) || 7;
@@ -19,6 +21,33 @@ class UserController {
         const id = req.params.id;
         const result = await UserService.getById(id);
         return res.status(httpStatus.OK).json(result);
+    }
+
+    async getMe(req, res) {
+        const user = await UserService.getByEmail(req.user.email);
+        if (!user) return res.status(httpStatus.BAD_REQUEST).json("Пользователь не найден");
+
+        return res.status(httpStatus.OK).json(user);
+    }
+
+    async updateMe(req, res) {
+        const { firstName, lastName, email } = req.body;
+        
+        const user = await UserService.getByEmail(req.user.email);
+        if (!user) return res.status(httpStatus.BAD_REQUEST).json("Пользователь не найден");
+
+        const userRep = await UserService.getByEmail(email);
+        if (userRep && userRep.id != user.id) return res.status(httpStatus.BAD_REQUEST).json("Пользователь с таким email уже существует");
+
+        const result = await UserService.updateMe(user.id, firstName, lastName, email);
+        const userRole = await RoleService.getById(user.role_id);
+
+        const token = generateAccessToken(email, userRole.name);
+
+        return res.status(httpStatus.OK).json({
+            email: email,
+            token: token
+        });
     }
 
     async create(req, res) {

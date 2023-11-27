@@ -8,13 +8,21 @@ import MoviePage from "./pages/MoviePage/MoviePage";
 import BuyTicketPage from "./pages/BuyTicketPage/BuyTicketPage";
 import SignInPage from "./pages/SignInPage/SignInPage";
 import SignUpPage from "./pages/SignUpPage/SignUpPage";
+import UserPage from "./pages/UserPage/UserPage";
+import MenuAppBar from "./components/MenuAppBar/MenuAppBar";
+import MoviesPage from "./pages/MoviesPage/MoviesPage";
 
 import store from "./store/store";
+import Spin from "./components/Loader.js/Loader";
+import ErrorAlert from "./components/ErrorAlert/ErrorAlert";
 
 function App() {
     return (
         <Provider store={ store }>
+            <Spin />
+            <ErrorAlert />
             <BrowserRouter>
+                <MenuAppBar />
                 <Routes>
                     <Route path="/" element={ <HomePage /> } />
 
@@ -22,8 +30,11 @@ function App() {
                     <Route path="/reg" element={ <SignUpPage /> } />
 
                     <Route path="/cinema/:id" element={ <CinemaPage /> } />
+                    <Route path="/cinemas" element={ <HomePage /> } />
+                    <Route path="/movies" element={ <MoviesPage /> } />
                     <Route path="/movie/:id" element={ <MoviePage /> } />
                     <Route path="/buyTicket/:id" element={ <BuyTicketPage /> } />
+                    <Route path="/me" element={ <UserPage /> } />
                 </Routes>
             </BrowserRouter>
         </Provider>
