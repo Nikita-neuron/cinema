@@ -1,4 +1,10 @@
-import { GET_CINEMAS, GET_CINEMA } from "../types";
+import { 
+    GET_CINEMAS,
+    GET_CINEMA,
+    CREATE_CINEMA,
+    UPDATE_CINEMA,
+    DELETE_CINEMA
+} from "../types";
 
 const initialState = {
     cinemas: [],
@@ -17,6 +23,13 @@ export const cinemas = (state = initialState, action) => {
             return {
                 ...state,
                 selectedCinema: action.payload
+            }
+        
+        case CREATE_CINEMA:
+        case UPDATE_CINEMA:
+        case DELETE_CINEMA:
+            return {
+                ...state
             }
 
         default: return state

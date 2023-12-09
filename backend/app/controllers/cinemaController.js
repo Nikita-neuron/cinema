@@ -4,6 +4,7 @@ const httpStatus = require('http-status');
 const logger = require("../logger/logger");
 const CinemaService = require("../services/cinemaService");
 const SeanceService = require("../services/seanceService");
+const hallService = require('../services/hallService');
 
 const LOGGER_TAG = path.relative(process.cwd(), __filename);
 
@@ -47,6 +48,10 @@ class CinemaController {
 
     async delete(req, res) {
         const id = req.params.id;
+
+        const cinema = await hallService.getByCinema(id);
+        if (cinema.length != 0) return res.status(httpStatus.BAD_REQUEST).json("У кинотеатра есть неудаленные залы");
+
         const result = await CinemaService.delete(id);
         return res.status(httpStatus.OK).json(result);
     }

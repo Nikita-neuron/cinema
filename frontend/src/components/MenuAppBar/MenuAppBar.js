@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from 'react-router-dom';
 
 import { 
@@ -18,7 +18,7 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import MovieFilterOutlinedIcon from '@mui/icons-material/MovieFilterOutlined';
 
-import { logoutMe } from '../../store/actions';
+import { logoutMe, getMeIsAdmin } from '../../store/actions';
 import { getUser } from '../../utils';
 
 const MenuAppBar = () => {
@@ -29,6 +29,14 @@ const MenuAppBar = () => {
     const dispatch = useDispatch();
 
     const user = getUser();
+
+    const isAdmin = useSelector(state => {
+        return state.users.isAdmin
+    });
+
+    useEffect(() => {
+        dispatch(getMeIsAdmin(false));
+    }, [user]);
 
     const pages = ["Кинотеатры", "Фильмы"];
     const settings = ["Профиль", 'Выйти'];
@@ -166,6 +174,17 @@ const MenuAppBar = () => {
                             </Button>
                         ))}
                     </Box>
+                    {
+                        isAdmin &&
+                        <Button
+                            sx={{
+                                color: "white"
+                            }}
+                            href='/admin'
+                        >
+                            Admin Panel
+                        </Button>
+                    }
                     {
                         !user &&
                         <Box sx={{ flexGrow: 0 }}>

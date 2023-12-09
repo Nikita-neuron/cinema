@@ -11,6 +11,7 @@ import SignUpPage from "./pages/SignUpPage/SignUpPage";
 import UserPage from "./pages/UserPage/UserPage";
 import MenuAppBar from "./components/MenuAppBar/MenuAppBar";
 import MoviesPage from "./pages/MoviesPage/MoviesPage";
+import AdminPage from "./pages/AdminPage/AdminPage";
 
 import store from "./store/store";
 import Spin from "./components/Loader.js/Loader";
@@ -35,6 +36,7 @@ function App() {
                     <Route path="/movie/:id" element={ <MoviePage /> } />
                     <Route path="/buyTicket/:id" element={ <BuyTicketPage /> } />
                     <Route path="/me" element={ <UserPage /> } />
+                    <Route path="/admin" element={ <AdminPage /> } />
                 </Routes>
             </BrowserRouter>
         </Provider>

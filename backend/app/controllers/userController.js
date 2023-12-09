@@ -30,6 +30,22 @@ class UserController {
         return res.status(httpStatus.OK).json(user);
     }
 
+    async getMeIsAdmin(req, res) {
+        const user = await UserService.getByEmail(req.user.email);
+        if (!user) return res.status(httpStatus.BAD_REQUEST).json("Пользователь не найден");
+
+        const adminRole = await RoleService.getByName("ADMIN");
+        const superAdminRole = await RoleService.getByName("SUPERADMIN");
+
+        const isAdmin = await UserService.getUserIsRole(user.id, adminRole.id);
+        const isSuperAdmin = await UserService.getUserIsRole(user.id, superAdminRole.id);
+
+        let result = false;
+        if (isAdmin || isSuperAdmin) result = true;
+
+        return res.status(httpStatus.OK).json(result);
+    }
+
     async updateMe(req, res) {
         const { firstName, lastName, email } = req.body;
         
@@ -74,7 +90,10 @@ class UserController {
         const role = await RoleService.getById(role_id);
         if (!role) return res.status(httpStatus.BAD_REQUEST).json("Роль не найдена");
 
-        const hashPassword = bcrypt.hashSync(password, BCRYPT_SALT_ROUNDS);
+        let hashPassword = user.password;
+        if (password != "") {
+            hashPassword = bcrypt.hashSync(password, BCRYPT_SALT_ROUNDS);
+        }
 
         const result = await UserService.update(id, firstName, lastName, email, hashPassword, role_id);
         return res.status(httpStatus.OK).json(result);

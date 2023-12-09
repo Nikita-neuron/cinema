@@ -4,6 +4,7 @@ const httpStatus = require('http-status');
 const logger = require("../logger/logger");
 const SeatService = require("../services/seatService");
 const HallService = require("../services/hallService");
+const TicketService = require("../services/ticketService");
 
 const LOGGER_TAG = path.relative(process.cwd(), __filename);
 
@@ -93,6 +94,10 @@ class SeatController {
 
     async delete(req, res) {
         const id = req.params.id;
+
+        const seat = await TicketService.getBySeat(id);
+        if (seat) return res.status(httpStatus.BAD_REQUEST).json("Есть билет на это место");
+
         const result = await SeatService.delete(id);
         return res.status(httpStatus.OK).json(result);
     }

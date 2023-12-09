@@ -37,6 +37,27 @@ class UserService {
         return result;
     }
 
+    async getByRole(role_id) {
+        let result = await User.findOne({
+            where: {
+                role_id: role_id
+            }
+        });
+
+        return result;
+    }
+
+    async getUserIsRole(id, role_id) {
+        let result = await User.findOne({
+            where: {
+                id: id,
+                role_id: role_id
+            }
+        });
+
+        return result;
+    }
+
     async create(firstName, lastName, email, password, role_id) {
         let result = await User.create({
             firstName: firstName,

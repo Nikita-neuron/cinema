@@ -5,6 +5,7 @@ const moment = require('moment');
 const logger = require("../logger/logger");
 const MovieService = require("../services/movieService");
 const GenreService = require("../services/genreService");
+const SeanceService = require("../services/seanceService");
 
 const LOGGER_TAG = path.relative(process.cwd(), __filename);
 
@@ -76,6 +77,10 @@ class MovieController {
 
     async delete(req, res) {
         const id = req.params.id;
+
+        const movie = await SeanceService.getByMovie(id);
+        if (movie) return res.status(httpStatus.BAD_REQUEST).json("Есть сеансы на этот фильм");
+
         const result = await MovieService.delete(id);
         return res.status(httpStatus.OK).json(result);
     }

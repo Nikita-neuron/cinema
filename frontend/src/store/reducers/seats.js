@@ -4,7 +4,11 @@ import {
     UPDATE_SEATS_SIZE,
     UPDATE_SEATS_PRICE,
     SAVE_SEATS_BY_HALL,
-    
+
+    GET_SEATS,
+    CREATE_SEAT,
+    UPDATE_SEAT,
+    DELETE_SEAT
 } from "../types"
 
 const initialState = {
@@ -19,7 +23,8 @@ const initialState = {
     columnNumber: 1,
     regularPrice: 1,
     vipPrice: 1,
-    hall_id: 1
+    hall_id: 1,
+    allSeats: []
 }
 
 export const seats = (state = initialState, action) => {
@@ -175,6 +180,19 @@ export const seats = (state = initialState, action) => {
             return (() => {
                 return state;
             })();
+
+        case GET_SEATS:
+            return {
+                ...state,
+                allSeats: action.payload
+            }
+
+        case CREATE_SEAT:
+        case UPDATE_SEAT:
+        case DELETE_SEAT:
+            return {
+                ...state
+            }
         default: return state;
     }
 }

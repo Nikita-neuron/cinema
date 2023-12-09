@@ -5,6 +5,7 @@ const logger = require("../logger/logger");
 const HallService = require("../services/hallService");
 const CinemaService = require("../services/cinemaService");
 const SeatService = require("../services/seatService");
+const SeanceService = require("../services/seanceService");
 
 const LOGGER_TAG = path.relative(process.cwd(), __filename);
 
@@ -42,6 +43,13 @@ class HallController {
 
     async delete(req, res) {
         const id = req.params.id;
+
+        let hall = await SeatService.getByHallId(id);
+        if (hall.length != 0) return res.status(httpStatus.BAD_REQUEST).json("У зала есть неудаленные места");
+
+        hall = await SeanceService.getByHall(id);
+        if (hall) return res.status(httpStatus.BAD_REQUEST).json("Существуют билеты в этот зал");
+
         const result = await HallService.delete(id);
         return res.status(httpStatus.OK).json(result);
     }

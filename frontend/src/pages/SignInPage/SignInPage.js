@@ -14,7 +14,7 @@ import {
 
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
-import { login, getCinemas } from "../../store/actions";
+import { login, getMeIsAdmin } from "../../store/actions";
 
 function SignInPage() {
     const dispatch = useDispatch();
@@ -28,6 +28,7 @@ function SignInPage() {
         const data = new FormData(event.currentTarget);
 
         dispatch(login(data.get("email"), data.get("password")));
+        dispatch(getMeIsAdmin(false));
     };
 
     return (

@@ -64,6 +64,15 @@ class SeanceService {
         return result;
     }
 
+    async getByHall(hall_id) {
+        let result = await Seance.findOne({
+            where: {
+                hall_id: hall_id
+            }
+        });
+        return result;
+    }
+
     async getByCinema(cinema_id) {
         let result = await Seance.findAll({
             include: [

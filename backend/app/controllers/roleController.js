@@ -3,6 +3,7 @@ const httpStatus = require('http-status');
 
 const logger = require("../logger/logger");
 const RoleService = require("../services/roleService");
+const UserService = require("../services/userService");
 
 const LOGGER_TAG = path.relative(process.cwd(), __filename);
 
@@ -40,6 +41,10 @@ class RoleController {
 
     async delete(req, res) {
         const id = req.params.id;
+
+        const role = await UserService.getByRole(id);
+        if (role) return res.status(httpStatus.BAD_REQUEST).json("Есть пользователь с такой ролью");
+
         const result = await RoleService.delete(id);
         return res.status(httpStatus.OK).json(result);
     }

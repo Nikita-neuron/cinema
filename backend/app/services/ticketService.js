@@ -93,6 +93,15 @@ class TicketService {
         return result;
     }
 
+    async getBySeance(seance_id) {
+        let result = await Ticket.findOne({
+            where: {
+                seance_id: seance_id
+            }
+        });
+        return result;
+    }
+
     async create(buy_date, user_id, seance_id, seat_id) {
         let result = await Ticket.create({
             buy_date: buy_date,

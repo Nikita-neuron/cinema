@@ -5,6 +5,10 @@ import {
     UPDATE_SEATS_PRICE,
     SAVE_SEATS_BY_HALL,
     
+    GET_SEATS,
+    CREATE_SEAT,
+    UPDATE_SEAT,
+    DELETE_SEAT
 } from "../types";
 
 import { loaderOn, loaderOff } from "./loader";
@@ -84,5 +88,126 @@ export const updateSeatsPrice = (regularPrice, vipPrice) => {
             type: UPDATE_SEATS_PRICE,
             payload: { regularPrice, vipPrice }
         });
+    }
+}
+
+export const getSeats = () => {
+    return async dispatch => {
+        try {
+            const response = await fetch(`${SEAT_URL}/`, {
+                headers: setAuthHeaders()
+            });
+            const jsonData = await response.json();
+
+            if (response.ok) {
+                dispatch({
+                    type: GET_SEATS,
+                    payload: jsonData
+                });
+            }
+            else {
+                dispatch(errorOn(`Данные не получены. ${jsonData}`));
+            }
+            dispatch(loaderOff());
+        } catch (err) {
+            dispatch(errorOn(`Данные не получены. Ошибка API`));
+            dispatch(loaderOff());
+        }
+    }
+}
+
+export const createSeat = (row, column, type, price, hall_id) => {
+    return async dispatch => {
+        try {
+            const response = await fetch(`${SEAT_URL}/`, {
+                method: "POST",
+                headers: setAuthHeaders({ 'Content-Type': 'application/json' }),
+                body: JSON.stringify({
+                    row,
+                    column,
+                    type,
+                    price,
+                    hall_id
+                })
+            });
+            const jsonData = await response.json();
+
+            if (response.ok) {
+                dispatch({
+                    type: CREATE_SEAT,
+                    payload: jsonData
+                });
+                dispatch(getSeats());
+            }
+            else {
+                dispatch(errorOn(`Данные не получены. ${jsonData}`));
+            }
+            dispatch(loaderOff());
+        } catch (err) {
+            dispatch(errorOn(`Данные не получены. Ошибка API`));
+            dispatch(loaderOff());
+        }
+    }
+}
+
+export const updateSeat = (id, row, column, type, price, hall_id) => {
+    return async dispatch => {
+        try {
+            const response = await fetch(`${SEAT_URL}/`, {
+                method: "PUT",
+                headers: setAuthHeaders({ 'Content-Type': 'application/json' }),
+                body: JSON.stringify({
+                    id,
+                    row,
+                    column,
+                    type,
+                    price,
+                    hall_id
+                })
+            });
+            const jsonData = await response.json();
+
+            if (response.ok) {
+                dispatch({
+                    type: UPDATE_SEAT,
+                    payload: jsonData
+                });
+                dispatch(getSeats());
+            }
+            else {
+                dispatch(errorOn(`Данные не получены. ${jsonData}`));
+            }
+            dispatch(loaderOff());
+        } catch (err) {
+            dispatch(errorOn(`Данные не получены. Ошибка API`));
+            dispatch(loaderOff());
+        }
+    }
+}
+
+export const deleteSeat = (id) => {
+    return async dispatch => {
+        try {
+            const response = await fetch(`${SEAT_URL}/${id}`, {
+                method: "DELETE",
+                headers: setAuthHeaders()
+            });
+            const jsonData = await response.json();
+
+            if (response.ok) {
+                dispatch({
+                    type: DELETE_SEAT,
+                    payload: jsonData
+                });
+                dispatch(getSeats());
+            }
+            else {
+                dispatch(errorOn(`Данные не получены. ${jsonData}`));
+            }
+            dispatch(loaderOff());
+        } catch (err) {
+            dispatch(errorOn(`Данные не получены. Ошибка API`));
+            dispatch(loaderOff());
+        }
     }
 }

@@ -18,7 +18,7 @@ import {
 import ClearIcon from '@mui/icons-material/Clear';
 import { styled } from '@mui/material/styles';
 
-import HallCreate from "../HallCreate/HallCreate";
+import HallCreate from "../Admin/HallCreate/HallCreate";
 import SeanceHallSeat from "../SeanceHallSeat/SeanceHallSeat";
 
 import { getSeatsByHall, saveTicket } from "../../store/actions";

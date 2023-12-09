@@ -1,3 +1,6 @@
 export const SAVE_TICKET = "SAVE_TICKET";
 export const GET_USER_TICKETS = "GET_USER_TICKETS";
+export const GET_TICKETS = "GET_TICKETS";
+export const CREATE_TICKET = "CREATE_TICKET";
 export const DELETE_TICKET = "DELETE_TICKET";
+export const UPDATE_TICKET = "UPDATE_TICKET";

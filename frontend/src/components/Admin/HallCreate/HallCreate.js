@@ -12,7 +12,7 @@ import {
 
 import HallCreateSeat from "../HallCreateSeat/HallCreateSeat";
 
-import { getSeatsByHall, updateSeatByHall, updateSeatsSize, updateSeatsPrice, saveSeatsByHall } from "../../store/actions/seats";
+import { getSeatsByHall, updateSeatByHall, updateSeatsSize, updateSeatsPrice, saveSeatsByHall } from "../../../store/actions";
 
 function HallCreate({ hall }) {
     const dispatch = useDispatch();
@@ -183,7 +183,7 @@ function HallCreate({ hall }) {
                     }
                 </Box>
             </Box>
-            <Button 
+            {/* <Button 
                 variant="contained"
                 sx={{
                     width: "min-content",
@@ -197,7 +197,7 @@ function HallCreate({ hall }) {
                 onClick={ handleSave }
             >
                 Сохранить
-            </Button>
+            </Button> */}
         </Paper>
     );
 }

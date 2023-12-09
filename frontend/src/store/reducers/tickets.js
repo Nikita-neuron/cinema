@@ -1,10 +1,15 @@
 import {
     SAVE_TICKET,
-    GET_USER_TICKETS
+    GET_USER_TICKETS,
+    GET_TICKETS,
+    CREATE_TICKET,
+    DELETE_TICKET,
+    UPDATE_TICKET
 } from "../types"
 
 const initialState = {
     tickets: [],
+    allTickets: [],
     redirectAfterBuy: false
 }
 
@@ -21,6 +26,19 @@ export const tickets = (state = initialState, action) => {
                 ...state,
                 tickets: action.payload,
                 redirectAfterBuy: false
+            }
+
+        case GET_TICKETS:
+            return {
+                ...state,
+                allTickets: action.payload
+            }
+
+        case CREATE_TICKET:
+        case UPDATE_TICKET:
+        case DELETE_TICKET:
+            return {
+                ...state
             }
             
         default: return state

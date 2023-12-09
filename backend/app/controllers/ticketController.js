@@ -60,9 +60,9 @@ class TicketController {
     }
 
     async update(req, res) {
-        const { id, user_id, seance_id, seat_id } = req.body;
+        const { id, seance_id, seat_id } = req.body;
 
-        const user = await UserService.getById(user_id);
+        const user = await UserService.getByEmail(req.user.email);
         if (!user) return res.status(httpStatus.BAD_REQUEST).json("Пользователь не найден");
 
         const seance = await SeanceService.getById(seance_id);
